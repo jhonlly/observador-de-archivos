@@ -43,19 +43,6 @@
      <set>Qt::AlignCenter</set>
     </property>
    </widget>
-   <widget class="QPushButton" name="boton_salir">
-    <property name="geometry">
-     <rect>
-      <x>600</x>
-      <y>160</y>
-      <width>101</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Salir</string>
-    </property>
-   </widget>
    <widget class="QPushButton" name="boton_iniciar">
     <property name="geometry">
      <rect>

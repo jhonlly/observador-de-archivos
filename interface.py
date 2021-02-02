@@ -17,7 +17,6 @@ class UsuarioUI(QMainWindow):
         self.boton_parar.clicked.connect(self.fn_parar)
         self.boton_iniciar.setEnabled(False)
         self.boton_parar.setEnabled(False)
-        self.boton_salir.clicked.connect(self.cerrar_aplicacion)
         self._supervisor_instancia = servicios.Watcher()
         self._t = None
 
@@ -55,9 +54,6 @@ class UsuarioUI(QMainWindow):
         msgBox.exec()
     
     
-    def cerrar_aplicacion(self):        
-        sys.exit()
-
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     GUI = UsuarioUI()
