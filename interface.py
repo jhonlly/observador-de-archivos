@@ -7,7 +7,8 @@ import servicios
 class UsuarioUI(QMainWindow):
 
     _file_name= ''
-    t = ''   
+    
+#TODO: Refactorizar.
     def __init__(self):
         super(UsuarioUI, self).__init__()
         uic.loadUi('front_usuario.ui', self)
@@ -18,8 +19,9 @@ class UsuarioUI(QMainWindow):
         self.boton_parar.setEnabled(False)
         self.boton_salir.clicked.connect(self.cerrar_aplicacion)
         self._supervisor_instancia = servicios.Watcher()
+        self._t = None
 
-
+        
     def fn_selecionar_carpeta(self):
         self.file_name = QFileDialog.getExistingDirectory(self,'Selecionar Carpeta', QtCore.QDir.rootPath())
         self.label_direccion_carpeta.setText(self.file_name)
@@ -31,20 +33,21 @@ class UsuarioUI(QMainWindow):
         self._supervisor_instancia.run(self.file_name)
  
     def fn_parar_supervision(self):
+        self._t._delete()
         self._supervisor_instancia.stop()
     
+    #TODO: Añadir funcionalidad para volver a iniciar la supervision.
     def fn_iniciar(self):
         self.boton_parar.setEnabled(True)
         self.boton_iniciar.setEnabled(False)
-        t = threading.Thread(name="fn_inicio_supervision", target=self.fn_inicio_supervision)
-        t.start()
+        self._t = threading.Thread(name="fn_inicio_supervision", target=self.fn_inicio_supervision)
+        self._t.start()
 
     def fn_parar(self):
         self.fn_parar_supervision()
         self.boton_iniciar.setEnabled(True)
         self.boton_parar.setEnabled(False)
-        print(self.t)
-        self.t.stop()
+        #TODO: Poner Widget en una clase aparte.
         msgBox = QMessageBox()
         msgBox.setIcon(QMessageBox.Information)
         msgBox.setWindowTitle("Información")
