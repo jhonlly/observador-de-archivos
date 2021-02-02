@@ -1,13 +1,62 @@
-from tkinter import *
+import time, threading, sys
 
-root=Tk()    
-root.title("Observador de archivos")
+from PyQt5 import uic,QtCore, QtGui
+from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog,QMessageBox
+import servicios
 
-ent1=Entry(root,font=40)
-ent1.grid(row=2,column=2)
-ent1.insert(0,"/Users/jhonrodriguez/PruebaTecnica/pruebatecnica/assets/billetesaTenerife.pdf" )
+class UsuarioUI(QMainWindow):
 
-b1=Button(root,text="Seleccionar carpeta",font=40,command=lambda: buscarArchivo(ent1, 'pdf'), )
-b1.grid(row=2,column=4, padx=0)
+    _file_name= ''
+    
+    def __init__(self):
+        super(UsuarioUI, self).__init__()
+        uic.loadUi('front_usuario.ui', self)
+        self.boton_selecionar_carpeta.clicked.connect(self.fn_selecionar_carpeta)
+        self.boton_iniciar.clicked.connect(self.fn_iniciar)
+        self.boton_parar.clicked.connect(self.fn_parar)
+        self.boton_iniciar.setEnabled(False)
+        self.boton_parar.setEnabled(False)
+        self.boton_salir.clicked.connect(self.cerrar_aplicacion)
+        self._supervisor_instancia = servicios.Watcher()
 
-root.mainloop()
+
+    def fn_selecionar_carpeta(self):
+        self.file_name = QFileDialog.getExistingDirectory(self,'Selecionar Carpeta', QtCore.QDir.rootPath())
+        self.label_direccion_carpeta.setText(self.file_name)
+        if(self.file_name != ''):
+            self.boton_iniciar.setEnabled(True)
+            
+
+    def fn_inicio_supervision(self):
+        self._supervisor_instancia.run(self.file_name)
+ 
+    def fn_parar_supervision(self):
+        self._supervisor_instancia.stop()
+    
+    def fn_iniciar(self):
+        self.boton_parar.setEnabled(True)
+        self.boton_iniciar.setEnabled(False)
+        t = threading.Thread(name="fn_inicio_supervision", target=self.fn_inicio_supervision)
+        t.start()
+
+    def fn_parar(self):
+        self.fn_parar_supervision()
+        self.boton_iniciar.setEnabled(True)
+        self.boton_parar.setEnabled(False)
+        msgBox = QMessageBox()
+        msgBox.setIcon(QMessageBox.Information)
+        msgBox.setWindowTitle("Información")
+        msgBox.setText("Se ha detenido correctamente la supervicion de la carpeta")
+        msgBox.exec()
+    
+    
+    def cerrar_aplicacion(self):        
+        self.close()
+
+
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    GUI = UsuarioUI()
+    GUI.show()
+    sys.exit(app.exec())

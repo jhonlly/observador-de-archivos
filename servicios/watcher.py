@@ -1,19 +1,17 @@
-
 import time
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
-from notificacion import enviar_notificacion
-
+import pync
+import os
 
 class Watcher:
-    DIRECTORY_TO_WATCH = "/Users/jhonrodriguez/PruebaTecnica/pruebatecnica/old"
 
     def __init__(self):
         self.observer = Observer()
-
-    def run(self):
-        event_handler = Handler()
-        self.observer.schedule(event_handler, self.DIRECTORY_TO_WATCH, recursive=True)
+        
+    def run(self, directorio_a_observar ):
+        manejador_eventos = Handler()
+        self.observer.schedule(manejador_eventos,directorio_a_observar)
         self.observer.start()
         try:
             while True:
@@ -21,8 +19,12 @@ class Watcher:
         except:
             self.observer.stop()
             print("Error")
-
+            
         self.observer.join()
+    
+    def stop(self):
+        self.observer.stop()
+
 
 
 class Handler(FileSystemEventHandler):
@@ -33,12 +35,12 @@ class Handler(FileSystemEventHandler):
             return None
 
         elif event.event_type == 'created':
-            enviar_notificacion("Se ha creado %s"% event.src_path)
+            pync.notify("Se ha creado %s"% event.src_path, group=os.getpid())
             print("Received created event - %s." % event.src_path)
+           
 
         elif event.event_type == 'modified':
-            enviar_notificacion("Se ha modificado %s"% event.src_path)
-            # Taken any action here when a file is modified.
+            pync.notify("Se ha modificado %s"% event.src_path, group=os.getpid())
             print("Received modified event - %s." % event.src_path)
 
 
