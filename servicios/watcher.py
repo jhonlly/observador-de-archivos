@@ -19,14 +19,12 @@ class Watcher:
         except:
             self.observer.stop()
             print("Error")
-            
+
         self.observer.join()
     
     def stop(self):
         self.observer.stop()
-
-
-
+        
 class Handler(FileSystemEventHandler):
 
     @staticmethod

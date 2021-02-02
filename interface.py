@@ -7,7 +7,7 @@ import servicios
 class UsuarioUI(QMainWindow):
 
     _file_name= ''
-    
+    t = ''   
     def __init__(self):
         super(UsuarioUI, self).__init__()
         uic.loadUi('front_usuario.ui', self)
@@ -43,6 +43,8 @@ class UsuarioUI(QMainWindow):
         self.fn_parar_supervision()
         self.boton_iniciar.setEnabled(True)
         self.boton_parar.setEnabled(False)
+        print(self.t)
+        self.t.stop()
         msgBox = QMessageBox()
         msgBox.setIcon(QMessageBox.Information)
         msgBox.setWindowTitle("Información")
@@ -51,9 +53,7 @@ class UsuarioUI(QMainWindow):
     
     
     def cerrar_aplicacion(self):        
-        self.close()
-
-
+        sys.exit()
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
